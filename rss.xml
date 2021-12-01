@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Hyunjung's Blog]]></title><description><![CDATA[보안과 개발을 좋아하는 학생입니다~^^]]></description><link>https://hyunjunggg.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 01 Dec 2021 16:02:39 GMT</lastBuildDate><item><title><![CDATA[Windows IRQL 1]]></title><description><![CDATA[Dispatch Level에서 Dispatcher 호출하기! 1. 개요 안녕하세여!!!!!!! 오늘은 IRQL을 좀 더 자세히 이해하기 위해서 간단한 테스트를 해보려고 합니다!!!!!!!!!!!!!!!!!!
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Hyunjung's Blog]]></title><description><![CDATA[보안과 개발을 좋아하는 학생입니다~^^]]></description><link>https://hyunjunggg.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 01 Dec 2021 16:11:48 GMT</lastBuildDate><item><title><![CDATA[Windows IRQL 1]]></title><description><![CDATA[Dispatch Level에서 Dispatcher 호출하기! 1. 개요 안녕하세여!!!!!!! 오늘은 IRQL을 좀 더 자세히 이해하기 위해서 간단한 테스트를 해보려고 합니다!!!!!!!!!!!!!!!!!!
 IRQL…]]></description><link>https://hyunjunggg.github.io/windows/1202_windows_irql1/</link><guid isPermaLink="false">https://hyunjunggg.github.io/windows/1202_windows_irql1/</guid><pubDate>Thu, 02 Dec 2021 00:58:13 GMT</pubDate><content:encoded>&lt;h1 id=&quot;dispatch-level에서-dispatcher-호출하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#dispatch-level%EC%97%90%EC%84%9C-dispatcher-%ED%98%B8%EC%B6%9C%ED%95%98%EA%B8%B0&quot; aria-label=&quot;dispatch level에서 dispatcher 호출하기 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Dispatch Level에서 Dispatcher 호출하기!&lt;/h1&gt;
 &lt;h2 id=&quot;1-개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#1-%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;1 개요 permalink&quot; class=&quot;anchor before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;1. 개요&lt;/h2&gt;
 &lt;p&gt;안녕하세여!!!!!!!&lt;/p&gt;
@@ -82,7 +82,26 @@ IRQL을 공부하다 보면 인터럽트 마스킹이라는 개념을 접하게 
 &lt;p&gt;따라서 현재 실행에 꼭 필요한 기능만을 수행하고, 다른 기능들은 DPC 담아 DPC 큐에 등록합니다!&lt;/p&gt;
 &lt;p&gt;그럼 나중에 IRQL DISPATCH_LEVEL 에서 등록된 DPC 루틴들이 실행되게 되는 거에요!!&lt;/p&gt;
 &lt;p&gt;정확한 순서는 아래와 같습니다.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5C222AFD385883A84E31.jpg&quot; alt=&quot;222AFD385883A84E31&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 521px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 89.66666666666666%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wgARCAASABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAECAwX/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIQAxAAAAHuU0zNkC0BQH//xAAZEAACAwEAAAAAAAAAAAAAAAABEAACMRH/2gAIAQEAAQUCMxcQdc//xAAUEQEAAAAAAAAAAAAAAAAAAAAg/9oACAEDAQE/AR//xAAUEQEAAAAAAAAAAAAAAAAAAAAg/9oACAECAQE/AR//xAAWEAEBAQAAAAAAAAAAAAAAAAAgMUH/2gAIAQEABj8Cg0//xAAbEAEBAQACAwAAAAAAAAAAAAABEQAgMSFBcf/aAAgBAQABPyFPWCp6w00+jSWn1pnh4H//2gAMAwEAAgADAAAAEGAHAP/EABQRAQAAAAAAAAAAAAAAAAAAACD/2gAIAQMBAT8QH//EABQRAQAAAAAAAAAAAAAAAAAAACD/2gAIAQIBAT8QH//EAB0QAQEAAQQDAAAAAAAAAAAAAAERABAxQVEhYaH/2gAIAQEAAT8QdV4cO9wgaTmSZJXGLIXDdT0HOyF71P3n/9k=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;222AFD385883A84E31&quot;
+        title=&quot;222AFD385883A84E31&quot;
+        src=&quot;/static/a29a8a787f96d4de7238abb782168175/d52bd/222AFD385883A84E31.jpg&quot;
+        srcset=&quot;/static/a29a8a787f96d4de7238abb782168175/f93b5/222AFD385883A84E31.jpg 300w,
+/static/a29a8a787f96d4de7238abb782168175/d52bd/222AFD385883A84E31.jpg 521w&quot;
+        sizes=&quot;(max-width: 521px) 100vw, 521px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;div class=&quot;gatsby-highlight&quot; data-language=&quot;text&quot;&gt;&lt;pre class=&quot;language-text&quot;&gt;&lt;code class=&quot;language-text&quot;&gt;1. 인터럽트 발생
 2. 발생한 인터럽트가 IRQL 이 높을 경우 현 상태를 저장하고 IDT를 참조하여 ISR 실행
 3. ISR이 동작하면서 CPU의 IRQL을 올림
@@ -147,29 +166,225 @@ IRQL을 공부하다 보면 인터럽트 마스킹이라는 개념을 접하게 
 	bRet = ReadFile(handle, NULL, NULL, NULL, NULL);&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 &lt;p&gt;다음으로 실제 가상환경에서 해당 드라이버 코드를 실행 시킨 후 WinDBG로 확인하는 과정을 하나씩 하나씩 살펴보겠습니당.&lt;/p&gt;
 &lt;p&gt;우선 드라이버를 가상환경에 올려줍시다!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129021308727.png&quot; alt=&quot;image-20211129021308727&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 966px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 27.666666666666668%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAnklEQVQY04WRTQuEIBRF22ZlZqX2QStx4f//f3e4DxqEGmdx4fJ4Ho/YbNuG67qw7zucc5jnGeu6YhgG9H2PruseKefsZRpCCNRaC4RJKcnMWitzZhxHCfsb6AskIMaI4zhA22makHOWTtsQApZlgfdeOgWqQFoQwEO8/Ya2bQul1GuqTybwPE8YY2SBxjWDG/bTkCDa3R9RLv8Dv+UD4DKNNFRJ9DIAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129021308727&quot;
+        title=&quot;image-20211129021308727&quot;
+        src=&quot;/static/fb100fa1aa50c995ab9af83a0fdcf5e3/5bf79/image-20211129021308727.png&quot;
+        srcset=&quot;/static/fb100fa1aa50c995ab9af83a0fdcf5e3/5a46d/image-20211129021308727.png 300w,
+/static/fb100fa1aa50c995ab9af83a0fdcf5e3/0a47e/image-20211129021308727.png 600w,
+/static/fb100fa1aa50c995ab9af83a0fdcf5e3/5bf79/image-20211129021308727.png 966w&quot;
+        sizes=&quot;(max-width: 966px) 100vw, 966px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;이제 해당 환경에 Windbg를 붙이고 제 드라이버의 ReadDispatch 루틴과 DpcRoutine에 break point를 걸어줍니다!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129022043078.png&quot; alt=&quot;image-20211129022043078&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 479px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 14.666666666666666%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAADCAYAAACTWi8uAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAdklEQVQI143H0QoCIRSEYd//1UQIwhITzBtXPW5rbm3eTYei22rg42dEjBEhBHjvceaenIMxBkopSCmh9QHWWowx8M8EUUHOCZUIJWeWMNcKKpmVV9tywWO747Z2tn4ldtpif3SYqCHN/a1euR8dE/9IC2s/PQHtnuHch7xJzwAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129022043078&quot;
+        title=&quot;image-20211129022043078&quot;
+        src=&quot;/static/41f1b5d06aa771b642c0b5180ffda9f9/a9b70/image-20211129022043078.png&quot;
+        srcset=&quot;/static/41f1b5d06aa771b642c0b5180ffda9f9/5a46d/image-20211129022043078.png 300w,
+/static/41f1b5d06aa771b642c0b5180ffda9f9/a9b70/image-20211129022043078.png 479w&quot;
+        sizes=&quot;(max-width: 479px) 100vw, 479px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;이렇게 세팅한 후 가상환경에서 application을 실행시키면, ReadDispatch에 bp 가 걸리게 됩니다.!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129021910788.png&quot; alt=&quot;image-20211129021910788&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 575px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 10.999999999999998%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAACCAYAAABYBvyLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAWUlEQVQI15XN0QZAIRCE4d7/7brpJrYoiohkFdEczRuc5bv7zRprLZxzCCEgpYRSCuacOOfg3vvLOyMiHHq894gxUs4ZvXdGqoq1Fp/UWjHGoNYavW7vzfYDO8qYvJJdLQEAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129021910788&quot;
+        title=&quot;image-20211129021910788&quot;
+        src=&quot;/static/d8afc499fab80cd3d81623cf8dbfd4c9/59415/image-20211129021910788.png&quot;
+        srcset=&quot;/static/d8afc499fab80cd3d81623cf8dbfd4c9/5a46d/image-20211129021910788.png 300w,
+/static/d8afc499fab80cd3d81623cf8dbfd4c9/59415/image-20211129021910788.png 575w&quot;
+        sizes=&quot;(max-width: 575px) 100vw, 575px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;이 때의  IRQL 레벨과 실행중인 스레드를 확인해 볼까요 ?&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129022227084.png&quot; alt=&quot;image-20211129022227084&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 690px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 21%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAECAYAAACOXx+WAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAoUlEQVQY042PWQqFMBAEvf/FvICgKG64gFsWoyBGbel58L4dKJoOQzEJkiRB27ZI0xTzPGPfd0Ep9ec8TzzPA++9cN+3cF2XdCY7JwjDEJRmWSbSsixRFAW6rkNVVfLOrOsay7IIzjms6wqtNYwxsNbiOI6fkIu8LM9zDMOAKIoQxzGapsG2bZLc4SVfJqCo73tM0yTicRwlKed32Qmv+MILHRQuv1tKL0wAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129022227084&quot;
+        title=&quot;image-20211129022227084&quot;
+        src=&quot;/static/fe3cd50360bc4839e8ee4b291fcedf23/1e043/image-20211129022227084.png&quot;
+        srcset=&quot;/static/fe3cd50360bc4839e8ee4b291fcedf23/5a46d/image-20211129022227084.png 300w,
+/static/fe3cd50360bc4839e8ee4b291fcedf23/0a47e/image-20211129022227084.png 600w,
+/static/fe3cd50360bc4839e8ee4b291fcedf23/1e043/image-20211129022227084.png 690w&quot;
+        sizes=&quot;(max-width: 690px) 100vw, 690px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;참고로 prcb 구조체는 windows가 cpu를 추상화한 구조체 입니다.!
 prcb 값을 확인해 보면 현재 IRQL LEVEL 은 PASSIVE(0) 이고, 현재 Thread는 &lt;code class=&quot;language-text&quot;&gt;ffffcb82292d3080&lt;/code&gt; 인 것을 확인할 수 있는데요! 해당 스레드에 대한 정보를 확인해보겠습니다.!&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129022634188.png&quot; alt=&quot;image-20211129022634188&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 729px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 32%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAAAsTAAALEwEAmpwYAAABB0lEQVQY05WQiY6DMAxE+f+fQ4ij5RIIUCkhlDuBdtXZTFZ8wFqx5ITxGxsnSVMkRYOqlXg8O7Rti74XeM0b5HJAyBFb1+EYXth7CdUJrEEIVTfQ54mfzwdXfEztBEGAJEmglYLSJxox4zmsEEJgWhYDGrC6HmY/wBZGUAYGA7Lx/Zrzl4zjOOBEUWSnklJaSFEUmKYJ4zhCGZP/xGmMnNvthtSsHYahnTTLMtzvd+R5jrqu0TSNNVT7Dq21nYLJmgCaMt/vNzajsSsTGsexTYLKsoTv+9aEZjTgt+v3sOZm1FHvuq7V1sbc8TzPNlPE6dhQVZWFXKDLkE18I5g9hFHPO43necYvq8u9eHbvLykAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129022634188&quot;
+        title=&quot;image-20211129022634188&quot;
+        src=&quot;/static/7bdf0bae13224e570206f80df359e50f/b2982/image-20211129022634188.png&quot;
+        srcset=&quot;/static/7bdf0bae13224e570206f80df359e50f/5a46d/image-20211129022634188.png 300w,
+/static/7bdf0bae13224e570206f80df359e50f/0a47e/image-20211129022634188.png 600w,
+/static/7bdf0bae13224e570206f80df359e50f/b2982/image-20211129022634188.png 729w&quot;
+        sizes=&quot;(max-width: 729px) 100vw, 729px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;당연히 제가 실행시킨 application의 컨택스트 이구여! ( 해당 application 이름은 ConsolApplication1.exe 가 맞습니다. )&lt;/p&gt;
 &lt;p&gt;현재 Running 상태인 것을 확인해 볼 수 있습니다.&lt;/p&gt;
 &lt;p&gt;아까 위에 첨부한 코드에서 알 수 있듯이, ReadDispatch 내부에서 10초 타이머를 세팅 시켰는데요~ 실제로 디버거를 Go 시키게 되면 10초 뒤에 DpcRoutine의 break point가 잡히게 됩니다.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129023101129.png&quot; alt=&quot;image-20211129023101129&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 629px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 10.999999999999998%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAACCAYAAABYBvyLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAc0lEQVQI102MUQrDIABDe/+zDQb76ToYWJ04RAWLKIL2rRYKC4QkEN6k9Jfb/cFznpFKIaUkhECtldYa+74zdGXv/fTYI8fnX9PHWObXG3WAxLqyLAtCCNQBN8YQY2TbNrz3pJTQWmOtxTl39utTSiHnzA8Rv5e7MAUrZgAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129023101129&quot;
+        title=&quot;image-20211129023101129&quot;
+        src=&quot;/static/faf6890aea336e4afe99346c57455f3a/63a68/image-20211129023101129.png&quot;
+        srcset=&quot;/static/faf6890aea336e4afe99346c57455f3a/5a46d/image-20211129023101129.png 300w,
+/static/faf6890aea336e4afe99346c57455f3a/0a47e/image-20211129023101129.png 600w,
+/static/faf6890aea336e4afe99346c57455f3a/63a68/image-20211129023101129.png 629w&quot;
+        sizes=&quot;(max-width: 629px) 100vw, 629px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;오오 위에 사진에서 보시다시피 DpcRoutine에서 멈췄습니다.
 이 때의 IRQL LEVEL은 몇일까요!?  당연히 Dispatch Level 이겠죠?&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129023437141.png&quot; alt=&quot;image-20211129023437141&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 649px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 17.333333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAADCAYAAACTWi8uAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAn0lEQVQI132OvQ6CMACEef9nMW46oINGJ2lcGiOFBktbEv7ahMLGzwl9AIYvueW+u+ATXiFfEeLbHToisEkK1/do2xZ1XaNpGhhjMI4jpmnCPM+7BO/DEfR0hnw8kYQXqFX+EwJaa1RVBaWUJ89zFEXhR7aBruvgnPN5w1qLYRgQ0G8MISUY5xBrkfEUhBAwxlCWpZdQSpFlmX+5LMsufycG3zamLKBNAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129023437141&quot;
+        title=&quot;image-20211129023437141&quot;
+        src=&quot;/static/ebc1c8ce5a5cacff08d8e8556c8d1f12/7762d/image-20211129023437141.png&quot;
+        srcset=&quot;/static/ebc1c8ce5a5cacff08d8e8556c8d1f12/5a46d/image-20211129023437141.png 300w,
+/static/ebc1c8ce5a5cacff08d8e8556c8d1f12/0a47e/image-20211129023437141.png 600w,
+/static/ebc1c8ce5a5cacff08d8e8556c8d1f12/7762d/image-20211129023437141.png 649w&quot;
+        sizes=&quot;(max-width: 649px) 100vw, 649px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;그럼 이때의 스레드는 누구일까요 ??&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129023843207.png&quot; alt=&quot;image-20211129023843207&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 732px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 12%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAACCAYAAABYBvyLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAdklEQVQI132NQQ7CIBREe/+TaeIKYtt0Q2n5IAKljd1p8sQL+JJJZvNmOq0198kwmMAaK6sTZrvgRCjbjoSK+I0YEnFZyN6TcuupxczI5UqxllQyx7HTKaXo+6ENOX6EcnKbIr28yKni2+HWxHfKPMaRT3zyjy+PVpVBj7IFxAAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129023843207&quot;
+        title=&quot;image-20211129023843207&quot;
+        src=&quot;/static/eb3c70be36d0c0387ad2051240714f46/d0cc0/image-20211129023843207.png&quot;
+        srcset=&quot;/static/eb3c70be36d0c0387ad2051240714f46/5a46d/image-20211129023843207.png 300w,
+/static/eb3c70be36d0c0387ad2051240714f46/0a47e/image-20211129023843207.png 600w,
+/static/eb3c70be36d0c0387ad2051240714f46/d0cc0/image-20211129023843207.png 732w&quot;
+        sizes=&quot;(max-width: 732px) 100vw, 732px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;ConsolApplication 스레드가 아닌 다른 스레드입니다! 여기서는 System 스레드 였네요 ㅎㅎ&lt;/p&gt;
 &lt;p&gt;이제  &lt;code class=&quot;language-text&quot;&gt;kd &gt; u fffff805556a1030 L20&lt;/code&gt; 커맨드로 어셈블리를 확인한 후 &lt;code class=&quot;language-text&quot;&gt;KeDelayExecutionThread()&lt;/code&gt;에 bp를 걸어 보겠습니다! ( 굳이 bp를 거는 이유는 .. 블루스크린이 뜨기 전의 마지막 드라이버코드이기 때문입니다.. )&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129024314132.png&quot; alt=&quot;image-20211129024314132&quot;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;%5Cimg%5Cimage-20211129024346385.png&quot; alt=&quot;image-20211129024346385&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 724px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 31.333333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAAAsTAAALEwEAmpwYAAABLklEQVQY022Q606DQBCFef/3sdEa/aXRKC0sXVjYxVIsbVruxWojtpwOGzWYOMnJzJ5kvp0Zg7sCYRiCcw6lFJgbIElrbMo3rCjLxRpRsgUPIqyzGs3hqLU/tGjbT/TRdZ1WH4ZlMwjhaaDnebAtC+/7PfI8R5am2kuWS/pUoSgKfBPwE92g1kDH4ZBBAJeAQghYBGyaBlVZakDvRfO5BseLGAPS72RDGTZ34SsJTo1CBniamCjrWiuvSvIkFAEtxvASRWiPR3xR4wn/h8EeHqFoKt80KdsIbRtF/IoN3TUjQDCdYi1p3ThGnaxQ0fpVkuAjzdDRJqfdXxl8dAl/fI3ZxQjq5hbx3T12MxepOcH22YS4GiObWrrOKVdshpLuXjuUmYPG9chz6M2pj+MMhda6j2viujsAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129024314132&quot;
+        title=&quot;image-20211129024314132&quot;
+        src=&quot;/static/a7a88f83242aacc5339c9bd2b3678742/a242d/image-20211129024314132.png&quot;
+        srcset=&quot;/static/a7a88f83242aacc5339c9bd2b3678742/5a46d/image-20211129024314132.png 300w,
+/static/a7a88f83242aacc5339c9bd2b3678742/0a47e/image-20211129024314132.png 600w,
+/static/a7a88f83242aacc5339c9bd2b3678742/a242d/image-20211129024314132.png 724w&quot;
+        sizes=&quot;(max-width: 724px) 100vw, 724px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 268px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 12.686567164179104%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAADCAYAAACTWi8uAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAeklEQVQI152NuQoEIRBE5/9/TUFGPIIBDU1MPEDBo3Zs2GyjfUlXV/Vx4aW1hlor5pxUxxjkpZRQSkHOmfTJeu/Un/yrT3Z2Dtd8hfceQgga4pzDOYcQArTWeJ4HxhjyrbWIMZKWUkIphfu+wRijZ3QQP1hr4R/23vgAHDTlDYk5KfMAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;img
+        class=&quot;gatsby-resp-image-image&quot;
+        alt=&quot;image-20211129024346385&quot;
+        title=&quot;image-20211129024346385&quot;
+        src=&quot;/static/fe91faf07f0772ce044429c9d004a0dd/484ae/image-20211129024346385.png&quot;
+        srcset=&quot;/static/fe91faf07f0772ce044429c9d004a0dd/484ae/image-20211129024346385.png 268w&quot;
+        sizes=&quot;(max-width: 268px) 100vw, 268px&quot;
+        style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        loading=&quot;lazy&quot;
+      /&gt;
+    &lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;그럼 이제 go 해보겟습니다!!&lt;/p&gt;
 &lt;p&gt;&lt;span
       class=&quot;gatsby-resp-image-wrapper&quot;
